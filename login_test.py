@@ -1,58 +1,85 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# ---------------- Chrome ----------------
 driver = webdriver.Chrome()
 driver.maximize_window()
 
 wait = WebDriverWait(driver, 20)
 
-# ---------------- Open Login Page ----------------
 driver.get("https://cbd-courierbidz.iihdev.com/login")
 
-# ---------------- Enter Email ----------------
+# ---------------- Email ----------------
 email = wait.until(
-    EC.visibility_of_element_located(
-        (By.NAME, "email")
-    )
+    EC.element_to_be_clickable((By.ID, "email"))
 )
 
 email.clear()
-email.send_keys("kashishqa.iihglobal@gmail.com")
 
-# ---------------- Enter Password ----------------
+for ch in "kashishiih@yopmail.com":
+    email.send_keys(ch)
+    time.sleep(0.08)
+
+# ---------------- Password ----------------
 password = wait.until(
-    EC.visibility_of_element_located(
-        (By.NAME, "password")
-    )
+    EC.element_to_be_clickable((By.ID, "password"))
 )
 
 password.clear()
-password.send_keys("Test@123")
 
-# ---------------- Click Login ----------------
+for ch in "Test@123":
+    password.send_keys(ch)
+    time.sleep(0.08)
+
+time.sleep(1)
+
+# Login Button
 login_btn = wait.until(
-    EC.element_to_be_clickable(
-        (By.XPATH, "//button[@type='submit']")
-    )
+    EC.element_to_be_clickable((By.XPATH, "//button[@type='submit']"))
 )
-
 login_btn.click()
-
-# ---------------- Wait for Dashboard ----------------
-wait.until(
-    EC.url_contains("/dashboard")
-)
 
 print("Login successful")
 
-# ---------------- Screenshot ----------------
-driver.save_screenshot("after_login.png")
-
+# ---------- Wait for Dashboard ----------
 time.sleep(5)
 
-# driver.quit()
+# ---------- Open Profile Dropdown ----------
+profile_dropdown = wait.until(
+    EC.element_to_be_clickable(
+        (
+            By.XPATH,
+            "//*[contains(text(),'Kashish')]"
+        )
+    )
+)
+
+profile_dropdown.click()
+
+print("Profile dropdown opened")
+
+time.sleep(2)
+
+# ---------- Click Sign Out ----------
+signout_btn = wait.until(
+    EC.element_to_be_clickable(
+        (
+            By.XPATH,
+            "//*[contains(text(),'Sign Out')]"
+        )
+    )
+)
+
+signout_btn.click()
+
+print("Sign Out clicked")
+
+# ---------- Verify Logout ----------
+time.sleep(5)
+
+print("Current URL after logout:", driver.current_url)
+
+# ---------- Close Browser ----------
+driver.quit()
